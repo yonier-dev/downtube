@@ -259,3 +259,9 @@ def serve_download(request, file_name):
     )
     response['Content-Type'] = 'audio/mpeg'
     return response
+
+
+@require_http_methods(['GET', 'HEAD'])
+def health_check(request):
+    """Endpoint de salud para verificar que el servidor responde (Android connectivity check)."""
+    return JsonResponse({'status': 'ok'})
