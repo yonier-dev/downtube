@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downtube - Buscador y Descargador de MP3</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Downtube</h1>
+            <p class="subtitle">Busca y descarga música de YouTube en MP3</p>
+        </header>
+
+        <section class="search-section">
+            <div class="search-card">
+                <div class="input-group">
+                    <input type="text" id="searchInput" placeholder="Busca una canción o artista..." autocomplete="off">
+                    <button id="searchBtn">Buscar</button>
+                </div>
+            </div>
+
+            <div id="resultsContainer" class="results-container hidden">
+                <h3>Resultados</h3>
+                <ul id="resultsList"></ul>
+            </div>
+        </section>
+
+        <section class="download-section hidden" id="downloadSection">
+            <div class="download-card">
+                <div id="downloadInfo"></div>
+                <div class="progress-container hidden" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">Preparando descarga...</p>
+                </div>
+                <div id="downloadResult" class="hidden">
+                    <a id="downloadLink" class="download-btn" href="#" download>⬇ Descargar MP3</a>
+                </div>
+                <div id="errorMessage" class="error-message hidden"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

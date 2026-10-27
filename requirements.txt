@@ -1,0 +1,6 @@
+# Dependencias del proyecto Downtube
+# Entorno virtual: workspace/.venv
+
+django==5.1.4
+yt-dlp
+python-dotenv==1.0.0
