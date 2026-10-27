@@ -10,11 +10,17 @@ from django.conf import settings
 
 from .models import DownloadTask
 from .services import YtDlpService
+from .spotify import SpotifyService
 
 logger = logging.getLogger(__name__)
 
-# Instancia singleton del servicio
+# Instancias singleton de los servicios
 yt_service = YtDlpService()
+spotify_service = None
+try:
+    spotify_service = SpotifyService()
+except Exception as e:
+    logger.warning(f"Spotify no configurado: {e}")
 
 MAX_QUERY_LENGTH = 200
 
