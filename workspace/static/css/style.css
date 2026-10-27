@@ -240,52 +240,11 @@ header h1 {
     border-color: var(--accent);
 }
 
-/* Toggle de tema */
-.theme-toggle {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
-    width: 60px;
-    height: 30px;
-    background: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 6px;
-    box-shadow: var(--shadow);
-    z-index: 100;
-    transition: var(--transition);
-}
-
-.theme-toggle:hover {
-    border-color: var(--accent);
-}
-
-.theme-toggle .toggle-thumb {
-    width: 24px;
-    height: 24px;
-    background: var(--accent);
-    border-radius: 50%;
-    transition: var(--transition);
-}
-
-[data-theme="light"] .theme-toggle .toggle-thumb {
-    background: #ff6666;
-    margin-left: 30px;
-}
-
-.theme-toggle .toggle-icon {
-    font-size: 0.8rem;
-}
-
 /* Selector de temas */
 .theme-selector {
     position: fixed;
     top: 1.5rem;
-    right: 7rem;
+    right: 15rem;
     z-index: 100;
 }
 
@@ -710,7 +669,7 @@ button:disabled {
 .lang-selector {
     position: fixed;
     top: 1.5rem;
-    right: 13rem;
+    right: 1.5rem;
     z-index: 100;
 }
 
