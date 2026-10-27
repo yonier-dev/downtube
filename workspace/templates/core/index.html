@@ -11,12 +11,13 @@
 
     <div class="container">
         <header>
-            <h1>Downtube</h1>
-            <p class="subtitle">Busca y descarga música y video de YouTube</p>
+            <h1 data-i18n="app.title">Downtube</h1>
+            <p class="subtitle" data-i18n="app.subtitle">Busca y descarga música y video de YouTube</p>
         </header>
 
         <!-- Selector de temas -->
         <div class="theme-selector">
+            <label for="themeSelect" data-i18n="app.theme.label">Tema:</label>
             <select id="themeSelect">
                 <option value="">Oscuro Neón</option>
                 <option value="electric-blue" selected>Azul Eléctrico</option>
@@ -28,6 +29,7 @@
 
         <!-- Selector de idioma -->
         <div class="lang-selector">
+            <label for="langSelect" data-i18n="app.lang.label">Idioma:</label>
             <select id="langSelect">
                 <option value="es" selected>Español</option>
                 <option value="en">English</option>
@@ -41,28 +43,28 @@
         <section class="search-section">
             <div class="search-card">
                 <div class="input-group">
-                    <input type="text" id="searchInput" placeholder="Busca una canción o artista..." autocomplete="off">
-                    <button id="searchBtn">Buscar</button>
+                    <input type="text" id="searchInput" placeholder="Busca una canción o artista..." autocomplete="off" data-i18n-placeholder="app.search.placeholder">
+                    <button id="searchBtn" data-i18n="app.search.btn">Buscar</button>
                 </div>
 
                 <!-- Selector de formato y calidad -->
                 <div class="format-group">
-                    <label for="formatSelect">Formato:</label>
+                    <label for="formatSelect" data-i18n="app.format.label">Formato:</label>
                     <select id="formatSelect">
-                        <option value="mp3">MP3 (audio)</option>
-                        <option value="mp4">MP4 (video)</option>
+                        <option value="mp3" data-i18n="app.format.mp3">MP3 (audio)</option>
+                        <option value="mp4" data-i18n="app.format.mp4">MP4 (video)</option>
                     </select>
-                    <label for="qualitySelect">Calidad:</label>
+                    <label for="qualitySelect" data-i18n="app.quality.label">Calidad:</label>
                     <select id="qualitySelect">
-                        <option value="192">192 kbps</option>
-                        <option value="128">128 kbps</option>
-                        <option value="320">320 kbps</option>
+                        <option value="192" data-i18n="app.quality.192">192 kbps</option>
+                        <option value="128" data-i18n="app.quality.128">128 kbps</option>
+                        <option value="320" data-i18n="app.quality.320">320 kbps</option>
                     </select>
                 </div>
             </div>
 
             <div id="resultsContainer" class="results-container hidden">
-                <h3>Resultados</h3>
+                <h3 data-i18n="app.results.title">Resultados</h3>
                 <ul id="resultsList"></ul>
             </div>
         </section>
@@ -88,14 +90,14 @@
             <div class="spotify-card">
                 <div id="spotifyInfo"></div>
                 <div class="spotify-input-group">
-                    <input type="text" id="spotifyUrlInput" placeholder="Pega la URL de la playlist de Spotify..." autocomplete="off">
-                    <button id="spotifyImportBtn">Importar Playlist</button>
+                    <input type="text" id="spotifyUrlInput" placeholder="Pega la URL de la playlist de Spotify..." autocomplete="off" data-i18n-placeholder="app.spotify.placeholder">
+                    <button id="spotifyImportBtn" data-i18n="app.spotify.btn">Importar Playlist</button>
                 </div>
                 <div id="spotifyResults" class="spotify-results hidden"></div>
                 <div id="spotifySummary" class="spotify-summary hidden"></div>
                 <div class="spotify-download-actions">
-                    <button class="spotify-select-all" type="button">Seleccionar todo</button>
-                    <button class="spotify-download-selected-btn" type="button" disabled>Descargar seleccionados</button>
+                    <button class="spotify-select-all" type="button" data-i18n="app.spotify.select_all">Seleccionar todo</button>
+                    <button class="spotify-download-selected-btn" type="button" disabled data-i18n="app.spotify.download_selected">Descargar seleccionados</button>
                 </div>
             </div>
         </section>
