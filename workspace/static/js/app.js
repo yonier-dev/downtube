@@ -639,6 +639,19 @@ searchInput.addEventListener('input', () => {
     // searchTimeout = setTimeout(searchMusic, 500);
 });
 
+// Mostrar/ocultar sección de Spotify
+const toggleSpotifyBtn = document.getElementById('toggleSpotifyBtn');
+if (toggleSpotifyBtn) {
+    toggleSpotifyBtn.addEventListener('click', () => {
+        spotifySection.classList.toggle('hidden');
+        if (!spotifySection.classList.contains('hidden')) {
+            toggleSpotifyBtn.textContent = '❌ Ocultar Playlist de Spotify';
+        } else {
+            toggleSpotifyBtn.textContent = '🎵 Importar Playlist de Spotify';
+        }
+    });
+}
+
 // Inicializar notificaciones al cargar
 requestNotificationPermission();
 

@@ -111,16 +111,18 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     padding: 2rem 1rem;
     -webkit-font-smoothing: antialiased;
+    overflow-y: auto;
 }
 
 .container {
     max-width: 720px;
     width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 header {
