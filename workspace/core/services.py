@@ -140,9 +140,11 @@ class YtDlpService:
             'view_count': info.get('view_count', 0) or 0,
         }
 
-    def download_mp3(self, url: str, task_id: str) -> dict:
+    def download_media(self, url: str, task_id: str, fmt: str = 'mp3', quality: str = '192') -> dict:
         """
-        Descarga el audio de un video de YouTube y lo convierte a MP3.
+        Descarga el audio o video de un video de YouTube.
+        fmt: 'mp3' o 'mp4'
+        quality: para mp3 -> '128', '192', '320' (kbps); para mp4 -> '360', '480', '720', '1080' (pixeles de altura)
         El archivo se nombra con el título del video (autor + canción) más
         un sufijo corto único para evitar colisiones.
         Devuelve un diccionario con la ruta del archivo, tamaño y metadatos.
@@ -156,29 +158,43 @@ class YtDlpService:
         except Exception:
             info = {}
 
-        video_title = info.get('title', '') or 'audio_youtube'
+        video_title = info.get('title', '') or 'video_youtube'
         safe_task_id = self._sanitize_filename(task_id)
 
-        # Nombre de archivo basado en el título real de YouTube
-        final_filename = self._generate_unique_filename(video_title, task_id)
+        # Extensión y nombre de archivo según el formato
+        ext = 'mp3' if fmt == 'mp3' else 'mp4'
+        final_filename = f'{self._sanitize_filename(video_title)}_{str(task_id).replace("-", "")[:8]}.{ext}'
         final_path = os.path.join(self.download_dir, final_filename)
 
-        # Plantilla de salida temporal (yt-dlp añadirá la extensión antes del postprocesado)
+        # Plantilla de salida temporal
         output_template = os.path.join(self.download_dir, f'{safe_task_id}.%(ext)s')
 
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'outtmpl': output_template,
-            'quiet': True,
-            'no_warnings': True,
-            'postprocessors': [
-                {
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '192',
-                },
-            ],
-        }
+        if fmt == 'mp3':
+            # Calidades de audio soportadas
+            audio_quality = quality if quality in ('128', '192', '320') else '192'
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'outtmpl': output_template,
+                'quiet': True,
+                'no_warnings': True,
+                'postprocessors': [
+                    {
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'mp3',
+                        'preferredquality': audio_quality,
+                    },
+                ],
+            }
+        else:
+            # Calidades de video soportadas (altura máxima en píxeles)
+            video_quality = quality if quality in ('360', '480', '720', '1080') else '720'
+            ydl_opts = {
+                'format': f'bestvideo[height<={video_quality}]+bestaudio/best[height<={video_quality}]/best',
+                'outtmpl': output_template,
+                'quiet': True,
+                'no_warnings': True,
+                'merge_output_format': 'mp4',
+            }
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -196,33 +212,28 @@ class YtDlpService:
             logger.error(f"Error inesperado en descarga: {e}")
             raise RuntimeError(f"Error inesperado al descargar: {str(e)}")
 
-        # Localizar el archivo MP3 generado por yt-dlp (usa safe_task_id como base)
-        tmp_mp3_path = os.path.join(self.download_dir, f'{safe_task_id}.mp3')
-        actual_mp3_path = tmp_mp3_path if os.path.exists(tmp_mp3_path) else None
+        # Localizar el archivo generado por yt-dlp
+        actual_path = None
+        for fname in os.listdir(self.download_dir):
+            if fname.startswith(safe_task_id) and fname.endswith(f'.{ext}'):
+                actual_path = os.path.join(self.download_dir, fname)
+                break
 
-        # Si no se encontró con el task_id, buscar cualquier archivo que coincida
-        if not actual_mp3_path:
-            for fname in os.listdir(self.download_dir):
-                if fname.startswith(safe_task_id) and fname.endswith('.mp3'):
-                    actual_mp3_path = os.path.join(self.download_dir, fname)
-                    break
-
-        if not actual_mp3_path or not os.path.exists(actual_mp3_path):
-            raise FileNotFoundError("No se pudo localizar el archivo MP3 generado.")
+        if not actual_path or not os.path.exists(actual_path):
+            raise FileNotFoundError(f"No se pudo localizar el archivo {ext.upper()} generado.")
 
         # Renombrar al nombre final basado en el título de YouTube
-        if actual_mp3_path != final_path:
-            # Si ya existe un archivo con el nombre final, eliminar el antiguo
+        if actual_path != final_path:
             if os.path.exists(final_path):
                 try:
                     os.remove(final_path)
                 except OSError:
                     pass
-            os.rename(actual_mp3_path, final_path)
+            os.rename(actual_path, final_path)
 
         file_size = os.path.getsize(final_path)
 
-        # Limpiar archivos temporales intermedios, conservando el MP3 final
+        # Limpiar archivos temporales intermedios, conservando el archivo final
         self.cleanup_temp_files(safe_task_id, keep_final=True)
 
         # Usar el título real del video obtenido tras la descarga si está disponible
@@ -231,6 +242,8 @@ class YtDlpService:
         return {
             'task_id': task_id,
             'title': final_title,
+            'format': fmt,
+            'quality': quality,
             'file_path': final_path,
             'file_name': final_filename,
             'file_size': file_size,

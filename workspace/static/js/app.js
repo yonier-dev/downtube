@@ -1,5 +1,7 @@
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
+const formatSelect = document.getElementById('formatSelect');
+const qualitySelect = document.getElementById('qualitySelect');
 const resultsContainer = document.getElementById('resultsContainer');
 const resultsList = document.getElementById('resultsList');
 const downloadSection = document.getElementById('downloadSection');
@@ -14,7 +16,114 @@ const errorMessage = document.getElementById('errorMessage');
 let selectedVideo = null;
 let searchTimeout = null;
 
-// Mostrar notificación toast
+// ==================== TEMA OSCURO/CLARO ====================
+const themeToggle = document.createElement('div');
+themeToggle.className = 'theme-toggle';
+themeToggle.innerHTML = `
+    <span class="toggle-icon" id="themeIcon">🌙</span>
+    <div class="toggle-thumb" id="themeThumb"></div>
+`;
+document.body.appendChild(themeToggle);
+
+const themeIcon = document.getElementById('themeIcon');
+const themeThumb = document.getElementById('themeThumb');
+
+// Cargar tema guardado
+const savedTheme = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeUI(savedTheme);
+
+function updateThemeUI(theme) {
+    const isDark = theme === 'dark';
+    themeIcon.textContent = isDark ? '🌙' : '☀️';
+    themeThumb.style.marginLeft = isDark ? '0' : '30px';
+}
+
+themeToggle.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeUI(newTheme);
+});
+
+// ==================== NOTIFICACIONES DEL NAVEGADOR ====================
+let notificationPermission = 'default';
+
+function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        showToast('Tu navegador no soporta notificaciones', 'warning');
+        return;
+    }
+
+    Notification.requestPermission().then(permission => {
+        notificationPermission = permission;
+        if (permission === 'granted') {
+            showToast('Notificaciones activadas ✅', 'success');
+        } else {
+            showToast('Notificaciones bloqueadas ❌', 'warning');
+        }
+    });
+}
+
+function showNotification(title, body) {
+    if (notificationPermission === 'granted') {
+        new Notification(title, {
+            body: body,
+            icon: '/static/favicon.ico'
+        });
+    }
+}
+
+// ==================== FILTROS DE DURACIÓN ====================
+const minDurationInput = document.createElement('input');
+minDurationInput.type = 'number';
+minDurationInput.placeholder = 'Mín (seg)';
+minDurationInput.className = 'filter-input';
+minDurationInput.id = 'minDurationInput';
+
+const maxDurationInput = document.createElement('input');
+maxDurationInput.type = 'number';
+maxDurationInput.placeholder = 'Máx (seg)';
+maxDurationInput.className = 'filter-input';
+maxDurationInput.id = 'maxDurationInput';
+
+// Insertar filtros después del input de búsqueda
+const searchInputGroup = document.querySelector('.input-group');
+const filtersGroup = document.createElement('div');
+filtersGroup.className = 'filters-group';
+filtersGroup.appendChild(minDurationInput);
+filtersGroup.appendChild(maxDurationInput);
+searchInputGroup.parentNode.insertBefore(filtersGroup, searchInputGroup.nextSibling);
+
+// Cambiar opciones de calidad según el formato seleccionado
+function updateQualityOptions() {
+    const isMp4 = formatSelect.value === 'mp4';
+    qualitySelect.innerHTML = '';
+
+    if (isMp4) {
+        qualitySelect.innerHTML = `
+            <option value="360">360p</option>
+            <option value="480">480p</option>
+            <option value="720" selected>720p</option>
+            <option value="1080">1080p</option>
+        `;
+    } else {
+        qualitySelect.innerHTML = `
+            <option value="128">128 kbps</option>
+            <option value="192" selected>192 kbps</option>
+            <option value="320">320 kbps</option>
+        `;
+    }
+}
+
+formatSelect.addEventListener('change', updateQualityOptions);
+
+// Inicializar opciones de calidad al cargar
+updateQualityOptions();
+
+// ==================== MOSTRAR TOAST ====================
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -72,7 +181,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Buscar música con debounce
+// ==================== BÚSQUEDA CON FILTROS ====================
 async function searchMusic() {
     const query = searchInput.value.trim();
     if (!query) return;
@@ -82,14 +191,21 @@ async function searchMusic() {
     searchBtn.textContent = 'Buscando...';
     resultsContainer.classList.add('hidden');
 
+    const minDur = minDurationInput.value || null;
+    const maxDur = maxDurationInput.value || null;
+
     try {
-        const response = await fetch('/api/search/', {
+        const response = await fetch('/api/search/filtered/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken'),
             },
-            body: JSON.stringify({ query }),
+            body: JSON.stringify({
+                query,
+                min_duration: minDur,
+                max_duration: maxDur
+            }),
         });
 
         const data = await response.json();
@@ -145,8 +261,13 @@ function renderResults(results) {
     });
 }
 
-// Iniciar descarga con feedback de progreso por etapas
+// ==================== DESCARGA DE VIDEO INDIVIDUAL ====================
 async function startDownload(url, title) {
+    const fmt = formatSelect.value;
+    const quality = qualitySelect.value;
+    const fmtLabel = fmt === 'mp4' ? 'MP4' : 'MP3';
+    const qualityLabel = qualitySelect.options[qualitySelect.selectedIndex].text;
+
     downloadSection.classList.remove('hidden');
     resultsContainer.classList.add('hidden');
     downloadResult.classList.add('hidden');
@@ -156,8 +277,8 @@ async function startDownload(url, title) {
     const stageMessages = [
         { text: 'Conectando con YouTube...', fill: 10 },
         { text: 'Extrayendo información del video...', fill: 25 },
-        { text: 'Descargando audio...', fill: 50 },
-        { text: 'Convirtiendo a MP3 (192 kbps)...', fill: 75 },
+        { text: `Descargando ${fmtLabel.toUpperCase()}...`, fill: 50 },
+        { text: `Procesando ${fmtLabel.toUpperCase()} (${qualityLabel})...`, fill: 75 },
         { text: 'Finalizando...', fill: 90 },
     ];
 
@@ -180,7 +301,7 @@ async function startDownload(url, title) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken'),
             },
-            body: JSON.stringify({ url }),
+            body: JSON.stringify({ url, format: fmt, quality }),
         });
 
         clearInterval(stageInterval);
@@ -198,7 +319,8 @@ async function startDownload(url, title) {
         downloadLink.textContent = `⬇ Descargar ${escapeHtml(data.file_name)}`;
         downloadLink.download = data.file_name;
 
-        showToast('¡Descarga lista! Haz clic para guardar el MP3.', 'success');
+        showToast(`¡Descarga lista! Haz clic para guardar el ${fmtLabel.toUpperCase()}.`, 'success');
+        showNotification('Downtube', `Descarga completada: ${title}`);
     } catch (err) {
         clearInterval(stageInterval);
         showError(err.message);
@@ -206,7 +328,7 @@ async function startDownload(url, title) {
     }
 }
 
-// Eventos
+// ==================== EVENTOS ====================
 searchBtn.addEventListener('click', searchMusic);
 
 searchInput.addEventListener('keypress', (e) => {
@@ -219,3 +341,6 @@ searchInput.addEventListener('input', () => {
     // Opcional: búsqueda automática tras pausa
     // searchTimeout = setTimeout(searchMusic, 500);
 });
+
+// Inicializar notificaciones al cargar
+requestNotificationPermission();

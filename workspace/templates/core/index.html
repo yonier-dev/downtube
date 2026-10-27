@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Downtube - Buscador y Descargador de MP3</title>
+    <title>Downtube - Buscador y Descargador de MP3 y MP4</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
@@ -20,6 +20,21 @@
                 <div class="input-group">
                     <input type="text" id="searchInput" placeholder="Busca una canción o artista..." autocomplete="off">
                     <button id="searchBtn">Buscar</button>
+                </div>
+
+                <!-- Selector de formato y calidad -->
+                <div class="format-group">
+                    <label for="formatSelect">Formato:</label>
+                    <select id="formatSelect">
+                        <option value="mp3">MP3 (audio)</option>
+                        <option value="mp4">MP4 (video)</option>
+                    </select>
+                    <label for="qualitySelect">Calidad:</label>
+                    <select id="qualitySelect">
+                        <option value="192">192 kbps</option>
+                        <option value="128">128 kbps</option>
+                        <option value="320">320 kbps</option>
+                    </select>
                 </div>
             </div>
 

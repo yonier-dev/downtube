@@ -106,6 +106,104 @@ header h1 {
     margin-bottom: 1.5rem;
 }
 
+/* Selector de formato y calidad */
+.format-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.format-group label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.format-group select {
+    padding: 0.85rem 1rem;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 120px;
+}
+
+.format-group select:focus {
+    border-color: var(--accent);
+}
+
+/* Filtros de búsqueda */
+.filters-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-input {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.85rem 1rem;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+.filter-input:focus {
+    border-color: var(--accent);
+}
+
+/* Toggle de tema */
+.theme-toggle {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 60px;
+    height: 30px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    box-shadow: var(--shadow);
+    z-index: 100;
+    transition: var(--transition);
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent);
+}
+
+.theme-toggle .toggle-thumb {
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+[data-theme="light"] .theme-toggle .toggle-thumb {
+    background: #ff6666;
+    margin-left: 30px;
+}
+
+.theme-toggle .toggle-icon {
+    font-size: 0.8rem;
+}
+
 #searchInput {
     flex: 1;
     padding: 1rem 1.25rem;

@@ -68,15 +68,24 @@ def search_music(request):
 @require_http_methods(['POST'])
 def download_music(request):
     """
-    Endpoint de descarga de audio MP3.
-    Cuerpo esperado (JSON): { "url": "https://www.youtube.com/watch?v=..." }
+    Endpoint de descarga de audio o video.
+    Cuerpo esperado (JSON): {
+        "url": "https://www.youtube.com/watch?v=...",
+        "format": "mp3",      # opcional: 'mp3' o 'mp4', default 'mp3'
+        "quality": "192"      # opcional: mp3 -> '128'|'192'|'320'; mp4 -> '360'|'480'|'720'|'1080'
+    }
     """
     try:
         data = json.loads(request.body)
         url = data.get('url', '').strip()
+        fmt = data.get('format', 'mp3').strip().lower()
+        quality = data.get('quality', '192').strip()
 
         if not url:
             return JsonResponse({'error': 'URL vacía'}, status=400)
+
+        if fmt not in ('mp3', 'mp4'):
+            return JsonResponse({'error': "Formato no válido. Usa 'mp3' o 'mp4'."}, status=400)
 
         if not yt_service._is_youtube_url(url):
             return JsonResponse({'error': 'URL no válida de YouTube'}, status=400)
@@ -104,9 +113,9 @@ def download_music(request):
             status='processing',
         )
 
-        # Descargar audio
+        # Descargar audio o video según el formato solicitado
         try:
-            result = yt_service.download_mp3(url, task_id)
+            result = yt_service.download_media(url, task_id, fmt=fmt, quality=quality)
 
             task.title = result.get('title', task.title)
             task.file_path = result.get('file_path', '')
@@ -118,6 +127,8 @@ def download_music(request):
                 'task_id': task_id,
                 'status': 'completed',
                 'title': result.get('title', ''),
+                'format': result.get('format', fmt),
+                'quality': result.get('quality', quality),
                 'file_name': result.get('file_name', ''),
                 'file_size': result.get('file_size', 0),
                 'download_url': f'{settings.MEDIA_URL}{result.get("file_name", "")}',
