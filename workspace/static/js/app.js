@@ -221,10 +221,11 @@ function renderResults(results) {
     }
 
     results.forEach(video => {
+        const thumbnailUrl = video.thumbnail || `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
         const li = document.createElement('li');
         li.className = 'result-item';
         li.innerHTML = `
-            <img src="${escapeHtml(video.thumbnail || 'https://via.placeholder.com/64')}" alt="thumb" class="result-thumbnail" loading="lazy">
+            <img src="${escapeHtml(thumbnailUrl)}" alt="thumb" class="result-thumbnail" loading="lazy">
             <div class="result-info">
                 <div class="result-title">${escapeHtml(video.title)}</div>
                 <div class="result-meta">
