@@ -31,6 +31,11 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-me-in-produc
 DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
+# Asegurar que la IP de red y cualquier host puedan acceder
+if '*' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('*')
+ALLOWED_HOSTS.extend(['192.168.115.167', '127.0.0.1', 'localhost'])
+ALLOWED_HOSTS = list(set(ALLOWED_HOSTS))  # eliminar duplicados
 
 
 # Application definition
