@@ -1,43 +1,46 @@
 # 🎵 Downtube
 
 Buscador y descargador de música de YouTube en formato **MP3 (192 kbps)**.  
-Aplicación web construida con **Python (Django 5.x)** y **yt-dlp** en el backend, y **HTML/CSS/JS moderno** en el frontend.
+Un proyecto personal construido con **Python (Django)** y **yt-dlp** en el backend, y **HTML/CSS/JS moderno** en el frontend.
 
-> ⚠️ **Uso responsable:** Esta herramienta es solo para fines educativos y de uso personal. Respeta los derechos de autor y los Términos de Servicio de YouTube. No descargues contenido sin los permisos correspondientes.
+> Hecho con ❤️ por **Yonier**.  
+> ⚠️ Solo para fines educativos y uso personal. Respeta los derechos de autor y los Términos de Servicio de YouTube.
 
 ---
 
-## 📸 Vista previa
+## 📸 ¿Qué hace esta app?
+
+Busca canciones en YouTube, las descarga y las convierte a MP3 automáticamente. Todo desde una interfaz sencilla, oscura y responsiva que funciona en celular, tablet y computadora.
 
 | Página principal | Resultados de búsqueda |
 |------------------|------------------------|
-| Interfaz en modo oscuro, minimalista y responsiva | Tarjetas con miniatura, título, duración y botón de selección |
+| Modo oscuro, minimalista | Tarjetas con miniatura, título, duración y botón para descargar |
 
 ---
 
 ## ✨ Características
 
-- 🔍 **Búsqueda en YouTube** con resultados en tiempo real
-- 🎵 **Descarga y conversión** de audio a MP3 (192 kbps) mediante `yt-dlp` + FFmpeg
-- 📛 **Nombres de archivo descriptivos:** los MP3 se guardan con el título real de YouTube (autor + canción)
-- 💻 **Frontend moderno:** modo oscuro, diseño responsivo (móvil, tablet, laptop), animaciones suaves
-- ⚡ **Feedback visual:** barra de progreso por etapas durante la descarga y conversión
-- 🛡️ **Seguridad:** validación de URLs de YouTube, sanitización de nombres de archivo, prevención de path traversal
-- 🧹 **Limpieza automática:** eliminación periódica de archivos antiguos en `media/` para evitar saturación de disco
-- 🔌 **API RESTful** en JSON para integración con otros clientes
+- 🔍 Busca música en YouTube y muestra resultados al instante
+- 🎵 Descarga el audio y lo convierte a MP3 (192 kbps) con `yt-dlp` + FFmpeg
+- 📛 Los archivos se guardan con el nombre real de la canción (autor + título)
+- 💻 Interfaz moderna en modo oscuro, 100% responsiva
+- ⚡ Barra de progreso mientras se descarga y convierte el audio
+- 🛡️ Valida que solo se procesen enlaces de YouTube
+- 🧹 Limpia automáticamente los archivos viejos para no llenar el disco
+- 🔌 API RESTful en JSON por si quieres integrarlo en otro proyecto
 
 ---
 
-## 🚀 Inicio rápido
+## 🚀 Cómo ponerlo en marcha
 
-### 1. Clonar el repositorio
+### 1. Clona el repositorio
 
 ```bash
-git clone https://github.com/TU_USUARIO/downtube.git
+git clone https://github.com/yonier-dev/downtube.git
 cd downtube
 ```
 
-### 2. Crear y activar el entorno virtual
+### 2. Crea y activa el entorno virtual
 
 ```bash
 # Linux / macOS
@@ -49,31 +52,31 @@ python -m venv workspace\.venv
 workspace\.venv\Scripts\activate
 ```
 
-### 3. Instalar dependencias
+### 3. Instala las dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configurar variables de entorno
+### 4. Configura tus variables de entorno
 
-Copia el archivo de ejemplo y ajusta los valores:
+Copia el archivo de ejemplo:
 
 ```bash
 cp workspace/.env.example workspace/.env
 ```
 
-Edita `workspace/.env`:
+Luego edita `workspace/.env` con tus datos:
 
 ```ini
-DJANGO_SECRET_KEY=una-clave-secreta-muy-larga-y-aleatoria
+DJANGO_SECRET_KEY=tu-clave-secreta-aqui
 DJANGO_DEBUG=True
 DJANGO_ALLOWED_HOSTS=*
 ```
 
-> ⚠️ Nunca subas el archivo `.env` real a GitHub. Está incluido en `.gitignore`.
+> 🔐 Nunca subas tu `.env` real a GitHub. Está ignorado por `.gitignore`.
 
-### 5. Aplicar migraciones de base de datos
+### 5. Prepara la base de datos
 
 ```bash
 cd workspace
@@ -81,48 +84,25 @@ python manage.py makemigrations core
 python manage.py migrate
 ```
 
-### 6. Ejecutar el servidor
+### 6. Inicia el servidor
 
 ```bash
 python manage.py runserver
 ```
 
-La aplicación estará disponible en: `http://127.0.0.1:8000/`
+Listo! Abre tu navegador en: `http://127.0.0.1:8000/`
 
 ---
 
-## 🔌 API RESTful
+## 🔌 API (por si quieres usarla desde otro lado)
 
-### Endpoints disponibles
-
-| Método | Endpoint | Descripción | Cuerpo (JSON) |
-|--------|----------|-------------|---------------|
-| `GET` | `/` | Página principal (interfaz de búsqueda) | — |
-| `POST` | `/api/search/` | Buscar música en YouTube | `{ "query": "nombre canción" }` |
-| `POST` | `/api/download/` | Descargar y convertir a MP3 | `{ "url": "https://youtu.be/..." }` |
-| `GET` | `/api/status/<task_id>/` | Consultar estado de una tarea | — |
-| `GET` | `/download/<archivo>.mp3` | Descarga directa del archivo MP3 | — |
-
-### Ejemplos con `curl`
-
-**Buscar música:**
-```bash
-curl -X POST http://127.0.0.1:8000/api/search/ \
-  -H "Content-Type: application/json" \
-  -d '{"query": "rick astley never gonna give you up"}'
-```
-
-**Descargar MP3:**
-```bash
-curl -X POST http://127.0.0.1:8000/api/download/ \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}'
-```
-
-**Consultar estado:**
-```bash
-curl http://127.0.0.1:8000/api/status/<task_id>/
-```
+| Método | Endpoint | ¿Qué hace? |
+|--------|----------|------------|
+| `GET` | `/` | Página principal |
+| `POST` | `/api/search/` | Buscar música (`{"query": "..."}`) |
+| `POST` | `/api/download/` | Descargar MP3 (`{"url": "https://youtu.be/..."}`) |
+| `GET` | `/api/status/<id>/` | Ver estado de una descarga |
+| `GET` | `/download/<archivo>.mp3` | Descargar el archivo directamente |
 
 ---
 
@@ -130,99 +110,52 @@ curl http://127.0.0.1:8000/api/status/<task_id>/
 
 ```
 downtube/
-├── .agents/                     # Prompts de rol de los agentes (Orquestador, Backend, Frontend, QA)
-├── .gitignore                   # Archivos ignorados por Git
-├── orchestrator.py              # Script de orquestación del proyecto
-├── requirements.txt             # Dependencias de Python
-└── workspace/                   # Código fuente de la aplicación
-    ├── .env.example             # Ejemplo de variables de entorno
-    ├── .env                     # Variables de entorno (no se sube a GitHub)
-    ├── manage.py                # CLI de Django
-    ├── db.sqlite3               # Base de datos SQLite (no se sube a GitHub)
-    ├── README.md                # Documentación técnica detallada
-    ├── downtube_project/        # Configuración Django
-    │   ├── settings.py
-    │   ├── urls.py
-    │   ├── wsgi.py
-    │   └── asgi.py
-    ├── core/                    # App principal
-    │   ├── __init__.py
-    │   ├── admin.py
-    │   ├── apps.py
-    │   ├── models.py            # DownloadTask (registro de tareas)
-    │   ├── views.py             # Endpoints API
-    │   ├── services.py          # YtDlpService (integración con yt-dlp)
-    │   ├── urls.py              # Rutas de la app
-    │   ├── migrations/
-    │   └── tests.py
+├── .agents/              # Prompts de los agentes de IA que me ayudaron a organizar esto
+├── .gitignore            # Archivos que no subo a GitHub
+├── README.md             # Este archivo
+├── orchestrator.py       # Script de coordinación
+├── requirements.txt      # Dependencias de Python
+└── workspace/            # Código de la aplicación
+    ├── .env.example      # Ejemplo de variables de entorno
+    ├── .env              # Tus variables (no se sube)
+    ├── manage.py
+    ├── db.sqlite3        # Base de datos local (no se sube)
+    ├── downtube_project/ # Configuración de Django
+    ├── core/             # La app principal
+    │   ├── models.py     # Modelo de tareas de descarga
+    │   ├── views.py      # Endpoints de la API
+    │   ├── services.py   # Lógica con yt-dlp
+    │   ├── urls.py       # Rutas
+    │   └── migrations/
     ├── static/
-    │   ├── css/
-    │   │   └── style.css        # Estilos modo oscuro minimalista
-    │   └── js/
-    │       └── app.js           # Lógica Fetch API y UI
+    │   ├── css/style.css     # Estilos (modo oscuro)
+    │   └── js/app.js         # Lógica del frontend
     ├── templates/
-    │   └── core/
-    │       └── index.html       # Interfaz principal
-    └── media/                   # Archivos MP3 generados (no se sube a GitHub)
+    │   └── core/index.html   # Interfaz principal
+    └── media/          # MP3s generados (no se sube)
 ```
 
 ---
 
-## 🔒 Seguridad y consideraciones legales
+## ⚠️ Requisitos
 
-- **Solo URLs de YouTube:** el backend valida que las URLs provengan de dominios de YouTube (`youtube.com`, `youtu.be`, etc.).
-- **Sanitización de archivos:** los nombres de archivo se limpian para prevenir ataques de path traversal.
-- **Variables de entorno:** las claves secretas se manejan mediante `.env` y nunca se suben al repositorio.
-- **Derechos de autor:** esta herramienta es para uso educativo y personal. El usuario es responsable de cumplir con las leyes de propiedad intelectual y los Términos de Servicio de YouTube.
-
----
-
-## 🛠️ Requisitos previos
-
-- Python 3.10 o superior
-- **FFmpeg** instalado en el sistema (requerido por `yt-dlp` para extraer audio)
+- Python 3.10+
+- **FFmpeg** instalado (necesario para que yt-dlp extraiga audio)
   - Ubuntu/Debian: `sudo apt install ffmpeg`
   - macOS: `brew install ffmpeg`
-  - Windows: descargar desde https://ffmpeg.org/
+  - Windows: https://ffmpeg.org/
 
 ---
 
-## 🤝 Contribución
+## ⚖️ Aviso legal
 
-Las contribuciones son bienvenidas. Para contribuir:
-
-1. Haz un **fork** del repositorio
-2. Crea una rama: `git checkout -b feature/nombre-de-tu-feature`
-3. Realiza tus cambios y haz commit: `git commit -m "feat: descripción del cambio"`
-4. Sube tus cambios: `git push origin feature/nombre-de-tu-feature`
-5. Abre un **Pull Request**
+Este es un proyecto personal y educativo. No me hago responsable del mal uso.  
+Descargar contenido de YouTube puede violar sus Términos de Servicio y los derechos de autor. Úsalo bajo tu propia responsabilidad y solo con contenido que tengas permiso para descargar.
 
 ---
 
-## 📄 Licencia
+## 🙌 Créditos
 
-Este proyecto está bajo la licencia **MIT**. Consulta el archivo `LICENSE` para más detalles.
+Proyecto creado por **Yonier** como práctica de desarrollo con Django, yt-dlp y JavaScript moderno.
 
----
-
-## 👨‍💻 Autor
-
-Creado con ❤️ como proyecto educativo de orquestación de agentes de IA.
-
----
-
-## ⚠️ Aviso importante antes de subir a GitHub
-
-Este repositorio será **público**. Asegúrate de:
-
-1. ✅ No incluir el archivo `.env` real (está en `.gitignore`)
-2. ✅ No incluir la carpeta `.venv/` (está en `.gitignore`)
-3. ✅ No incluir `db.sqlite3` (está en `.gitignore`)
-4. ✅ No incluir archivos MP3 generados en `media/` (está en `.gitignore`)
-5. ✅ Revisar que no haya credenciales hardcodeadas en el código
-
----
-
-## 📞 Soporte
-
-Si tienes preguntas o encuentras un problema, abre un **Issue** en este repositorio.
+Si te sirve, dale una ⭐ en GitHub o compártelo con quien pueda necesitarlo.
