@@ -18,49 +18,24 @@ let selectedVideo = null;
 let searchTimeout = null;
 
 // ==================== SELECTOR DE TEMAS (5 OPCIONES) ====================
-const themeThemes = {
-    'dark-neon': '🌙 Oscuro Neón',
-    'electric-blue': '⚡ Azul Eléctrico',
-    'neon-green': '🟢 Verde Neón',
-    'deep-purple': '🟣 Púrpura Profundo',
-    'light-minimal': '☀️ Claro Minimalista'
-};
 
-// Cargar tema guardado o usar el por defecto
-const savedTheme = localStorage.getItem('theme') || 'dark-neon';
-document.documentElement.setAttribute('data-theme', savedTheme);
-themeSelect.value = savedTheme;
-updateThemeIcon(savedTheme);
-
-function updateThemeIcon(theme) {
-    const themeNames = {
-        'dark-neon': '🌙',
-        'electric-blue': '⚡',
-        'neon-green': '🟢',
-        'deep-purple': '🟣',
-        'light-minimal': '☀️'
-    };
-    themeIcon.textContent = themeNames[theme] || '🌙';
+// Cargar tema guardado o usar el por defecto (vacío = :root Oscuro Neón)
+const savedTheme = localStorage.getItem('theme') || '';
+if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+} else {
+    document.documentElement.removeAttribute('data-theme');
 }
-
-themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const themes = Object.keys(themeThemes);
-    const currentIndex = themes.indexOf(currentTheme);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    const nextTheme = themes[nextIndex];
-
-    document.documentElement.setAttribute('data-theme', nextTheme);
-    localStorage.setItem('theme', nextTheme);
-    themeSelect.value = nextTheme;
-    updateThemeIcon(nextTheme);
-});
+themeSelect.value = savedTheme;
 
 themeSelect.addEventListener('change', (e) => {
     const selectedTheme = e.target.value;
-    document.documentElement.setAttribute('data-theme', selectedTheme);
+    if (selectedTheme) {
+        document.documentElement.setAttribute('data-theme', selectedTheme);
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
     localStorage.setItem('theme', selectedTheme);
-    updateThemeIcon(selectedTheme);
 });
 
 // ==================== NOTIFICACIONES DEL NAVEGADOR ====================
