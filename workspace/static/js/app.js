@@ -19,8 +19,8 @@ let searchTimeout = null;
 
 // ==================== SELECTOR DE TEMAS (5 OPCIONES) ====================
 
-// Cargar tema guardado o usar el por defecto (vacío = :root Oscuro Neón)
-const savedTheme = localStorage.getItem('theme') || '';
+// Cargar tema guardado o usar el por defecto (Azul Eléctrico)
+const savedTheme = localStorage.getItem('theme') || 'electric-blue';
 if (savedTheme) {
     document.documentElement.setAttribute('data-theme', savedTheme);
 } else {
