@@ -191,26 +191,19 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// ==================== FILTROS DE DURACIÓN ====================
-const minDurationInput = document.createElement('input');
-minDurationInput.type = 'number';
-minDurationInput.className = 'filter-input';
-minDurationInput.id = 'minDurationInput';
-minDurationInput.setAttribute('data-i18n-placeholder', 'app.search.placeholder');
+// ==================== MOSTRAR TOAST ====================
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
 
-const maxDurationInput = document.createElement('input');
-maxDurationInput.type = 'number';
-maxDurationInput.className = 'filter-input';
-maxDurationInput.id = 'maxDurationInput';
-maxDurationInput.setAttribute('data-i18n-placeholder', 'app.search.placeholder');
-
-// Insertar filtros después del input de búsqueda
-const searchInputGroup = document.querySelector('.input-group');
-const filtersGroup = document.createElement('div');
-filtersGroup.className = 'filters-group';
-filtersGroup.appendChild(minDurationInput);
-filtersGroup.appendChild(maxDurationInput);
-searchInputGroup.parentNode.insertBefore(filtersGroup, searchInputGroup.nextSibling);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
 // Cambiar opciones de calidad según el formato seleccionado
 function updateQualityOptions() {
@@ -248,9 +241,6 @@ async function searchMusic() {
     searchBtn.textContent = t('app.search.btn') + '...';
     resultsContainer.classList.add('hidden');
 
-    const minDur = minDurationInput.value || null;
-    const maxDur = maxDurationInput.value || null;
-
     try {
         const response = await fetch('/api/search/filtered/', {
             method: 'POST',
@@ -259,9 +249,7 @@ async function searchMusic() {
                 'X-CSRFToken': getCookie('csrftoken'),
             },
             body: JSON.stringify({
-                query,
-                min_duration: minDur,
-                max_duration: maxDur
+                query
             }),
         });
 
