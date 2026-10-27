@@ -26,6 +26,18 @@
             </select>
         </div>
 
+        <!-- Selector de idioma -->
+        <div class="lang-selector">
+            <select id="langSelect">
+                <option value="es" selected>Español</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="pt">Português</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+            </select>
+        </div>
+
         <section class="search-section">
             <div class="search-card">
                 <div class="input-group">
@@ -68,6 +80,23 @@
                     <a id="downloadLink" class="download-btn" href="#" download>⬇ Descargar MP3</a>
                 </div>
                 <div id="errorMessage" class="error-message hidden"></div>
+            </div>
+        </section>
+
+        <!-- Sección: Importar Playlist de Spotify -->
+        <section class="spotify-section hidden" id="spotifySection">
+            <div class="spotify-card">
+                <div id="spotifyInfo"></div>
+                <div class="spotify-input-group">
+                    <input type="text" id="spotifyUrlInput" placeholder="Pega la URL de la playlist de Spotify..." autocomplete="off">
+                    <button id="spotifyImportBtn">Importar Playlist</button>
+                </div>
+                <div id="spotifyResults" class="spotify-results hidden"></div>
+                <div id="spotifySummary" class="spotify-summary hidden"></div>
+                <div class="spotify-download-actions">
+                    <button class="spotify-select-all" type="button">Seleccionar todo</button>
+                    <button class="spotify-download-selected-btn" type="button" disabled>Descargar seleccionados</button>
+                </div>
             </div>
         </section>
     </div>

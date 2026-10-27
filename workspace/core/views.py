@@ -265,3 +265,69 @@ def serve_download(request, file_name):
 def health_check(request):
     """Endpoint de salud para verificar que el servidor responde (Android connectivity check)."""
     return JsonResponse({'status': 'ok'})
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def import_spotify_playlist(request):
+    """
+    Importar una playlist pública de Spotify.
+    Cuerpo esperado (JSON): { "url": "https://open.spotify.com/playlist/..." }
+    """
+    if spotify_service is None:
+        return JsonResponse({
+            'error': 'Spotify no configurado. Agrega SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en .env'
+        }, status=503)
+
+    try:
+        data = json.loads(request.body)
+        url = data.get('url', '').strip()
+
+        if not url:
+            return JsonResponse({'error': 'URL vacía'}, status=400)
+
+        result = spotify_service.get_playlist_tracks(url)
+        return JsonResponse(result)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except RuntimeError as e:
+        return JsonResponse({'error': str(e)}, status=502)
+    except Exception as e:
+        logger.exception("Error inesperado importando playlist de Spotify")
+        return JsonResponse({'error': 'Error interno del servidor'}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def import_spotify_playlist(request):
+    """
+    Importar una playlist pública de Spotify.
+    Cuerpo esperado (JSON): { "url": "https://open.spotify.com/playlist/..." }
+    """
+    if spotify_service is None:
+        return JsonResponse({
+            'error': 'Spotify no configurado. Agrega SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en .env'
+        }, status=503)
+
+    try:
+        data = json.loads(request.body)
+        url = data.get('url', '').strip()
+
+        if not url:
+            return JsonResponse({'error': 'URL vacía'}, status=400)
+
+        result = spotify_service.get_playlist_tracks(url)
+        return JsonResponse(result)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except RuntimeError as e:
+        return JsonResponse({'error': str(e)}, status=502)
+    except Exception as e:
+        logger.exception("Error inesperado importando playlist de Spotify")
+        return JsonResponse({'error': 'Error interno del servidor'}, status=500)
