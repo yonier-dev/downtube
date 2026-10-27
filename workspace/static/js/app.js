@@ -194,15 +194,15 @@ function getCookie(name) {
 // ==================== FILTROS DE DURACIÓN ====================
 const minDurationInput = document.createElement('input');
 minDurationInput.type = 'number';
-minDurationInput.placeholder = t('app.search.placeholder');
 minDurationInput.className = 'filter-input';
 minDurationInput.id = 'minDurationInput';
+minDurationInput.setAttribute('data-i18n-placeholder', 'app.search.placeholder');
 
 const maxDurationInput = document.createElement('input');
 maxDurationInput.type = 'number';
-maxDurationInput.placeholder = t('app.search.placeholder');
 maxDurationInput.className = 'filter-input';
 maxDurationInput.id = 'maxDurationInput';
+maxDurationInput.setAttribute('data-i18n-placeholder', 'app.search.placeholder');
 
 // Insertar filtros después del input de búsqueda
 const searchInputGroup = document.querySelector('.input-group');
