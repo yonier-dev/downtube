@@ -242,6 +242,7 @@ function renderResults(results) {
                 </div>
             </div>
             <div class="result-actions">
+                <button class="view-btn" type="button" data-url="${escapeHtml(video.url)}" data-title="${escapeHtml(video.title)}" title="Ver en YouTube">▶ Ver</button>
                 <button class="select-btn" type="button" data-url="${escapeHtml(video.url)}" data-title="${escapeHtml(video.title)}">Seleccionar</button>
             </div>
         `;
@@ -257,6 +258,16 @@ function renderResults(results) {
             const title = e.target.dataset.title;
             selectedVideo = { url, title };
             startDownload(url, title);
+        });
+    });
+
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const url = e.target.dataset.url;
+            const title = e.target.dataset.title;
+            window.open(url, '_blank');
+            showToast(`Abriendo "${escapeHtml(title)}" en YouTube...`, 'success');
         });
     });
 }
