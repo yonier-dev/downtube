@@ -66,6 +66,60 @@ def search_music(request):
 
 @csrf_exempt
 @require_http_methods(['POST'])
+def search_music_filtered(request):
+    """
+    Endpoint de búsqueda con filtros de duración.
+    Cuerpo esperado (JSON): {
+        "query": "nombre canción",
+        "min_duration": 60,      # opcional, en segundos
+        "max_duration": 600      # opcional, en segundos
+    }
+    """
+    try:
+        data = json.loads(request.body)
+        query = data.get('query', '').strip()
+
+        if not query:
+            return JsonResponse({'error': 'Query vacío'}, status=400)
+
+        if len(query) > MAX_QUERY_LENGTH:
+            return JsonResponse({'error': 'Query demasiado largo'}, status=400)
+
+        min_duration = data.get('min_duration')
+        max_duration = data.get('max_duration')
+
+        if min_duration is not None:
+            try:
+                min_duration = int(min_duration)
+                if min_duration < 0:
+                    raise ValueError
+            except (ValueError, TypeError):
+                return JsonResponse({'error': 'min_duration debe ser un número positivo'}, status=400)
+
+        if max_duration is not None:
+            try:
+                max_duration = int(max_duration)
+                if max_duration < 0:
+                    raise ValueError
+            except (ValueError, TypeError):
+                return JsonResponse({'error': 'max_duration debe ser un número positivo'}, status=400)
+
+        results = yt_service.search_with_filters(
+            query, min_duration=min_duration, max_duration=max_duration
+        )
+        return JsonResponse({'results': results, 'count': len(results)})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+    except RuntimeError as e:
+        return JsonResponse({'error': str(e)}, status=502)
+    except Exception as e:
+        logger.exception("Error inesperado en búsqueda filtrada")
+        return JsonResponse({'error': 'Error interno del servidor'}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
 def download_music(request):
     """
     Endpoint de descarga de audio o video.

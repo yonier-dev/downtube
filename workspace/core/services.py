@@ -112,6 +112,54 @@ class YtDlpService:
 
         return results
 
+    def search_with_filters(self, query: str, min_duration: int = None,
+                           max_duration: int = None, max_results: int = 10) -> list[dict]:
+        """
+        Busca videos en YouTube con filtros opcionales de duración.
+        """
+        if not query or not query.strip():
+            return []
+
+        query = query.strip()
+        ydl_opts = {
+            'quiet': True,
+            'no_warnings': True,
+            'extract_flat': True,
+            'default_search': 'ytsearch',
+            'playlistend': max_results,
+        }
+
+        results = []
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                search_url = f'ytsearch{max_results}:{query}'
+                info = ydl.extract_info(search_url, download=False)
+                entries = info.get('entries', []) or []
+
+                for entry in entries:
+                    if not entry:
+                        continue
+                    duration = entry.get('duration', 0) or 0
+
+                    # Aplicar filtros de duración
+                    if min_duration is not None and duration < min_duration:
+                        continue
+                    if max_duration is not None and duration > max_duration:
+                        continue
+
+                    results.append({
+                        'id': entry.get('id', ''),
+                        'title': entry.get('title', '') or 'Sin título',
+                        'url': entry.get('url', ''),
+                        'duration': duration,
+                        'thumbnail': entry.get('thumbnail', ''),
+                    })
+        except Exception as e:
+            logger.error(f"Error en búsqueda con filtros: {e}")
+            raise RuntimeError(f"Error al buscar en YouTube: {str(e)}")
+
+        return results
+
     def get_video_info(self, url: str) -> dict:
         """
         Obtiene información detallada de un video sin descargarlo.
