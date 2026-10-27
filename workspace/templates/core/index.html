@@ -12,8 +12,25 @@
     <div class="container">
         <header>
             <h1>Downtube</h1>
-            <p class="subtitle">Busca y descarga música de YouTube en MP3</p>
+            <p class="subtitle">Busca y descarga música y video de YouTube</p>
         </header>
+
+        <!-- Selector de temas -->
+        <div class="theme-selector">
+            <select id="themeSelect">
+                <option value="dark-neon">Oscuro Neón</option>
+                <option value="electric-blue">Azul Eléctrico</option>
+                <option value="neon-green">Verde Neón</option>
+                <option value="deep-purple">Púrpura Profundo</option>
+                <option value="light-minimal">Claro Minimalista</option>
+            </select>
+        </div>
+
+        <!-- Toggle claro/oscuro -->
+        <div class="theme-toggle" title="Cambiar tema">
+            <span class="toggle-icon" id="themeIcon">🌙</span>
+            <div class="toggle-thumb" id="themeThumb"></div>
+        </div>
 
         <section class="search-section">
             <div class="search-card">

@@ -2,6 +2,7 @@ const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const formatSelect = document.getElementById('formatSelect');
 const qualitySelect = document.getElementById('qualitySelect');
+const themeSelect = document.getElementById('themeSelect');
 const resultsContainer = document.getElementById('resultsContainer');
 const resultsList = document.getElementById('resultsList');
 const downloadSection = document.getElementById('downloadSection');
@@ -16,36 +17,50 @@ const errorMessage = document.getElementById('errorMessage');
 let selectedVideo = null;
 let searchTimeout = null;
 
-// ==================== TEMA OSCURO/CLARO ====================
-const themeToggle = document.createElement('div');
-themeToggle.className = 'theme-toggle';
-themeToggle.innerHTML = `
-    <span class="toggle-icon" id="themeIcon">🌙</span>
-    <div class="toggle-thumb" id="themeThumb"></div>
-`;
-document.body.appendChild(themeToggle);
+// ==================== SELECTOR DE TEMAS (5 OPCIONES) ====================
+const themeThemes = {
+    'dark-neon': '🌙 Oscuro Neón',
+    'electric-blue': '⚡ Azul Eléctrico',
+    'neon-green': '🟢 Verde Neón',
+    'deep-purple': '🟣 Púrpura Profundo',
+    'light-minimal': '☀️ Claro Minimalista'
+};
 
-const themeIcon = document.getElementById('themeIcon');
-const themeThumb = document.getElementById('themeThumb');
-
-// Cargar tema guardado
-const savedTheme = localStorage.getItem('theme') || 'dark';
+// Cargar tema guardado o usar el por defecto
+const savedTheme = localStorage.getItem('theme') || 'dark-neon';
 document.documentElement.setAttribute('data-theme', savedTheme);
-updateThemeUI(savedTheme);
+themeSelect.value = savedTheme;
+updateThemeIcon(savedTheme);
 
-function updateThemeUI(theme) {
-    const isDark = theme === 'dark';
-    themeIcon.textContent = isDark ? '🌙' : '☀️';
-    themeThumb.style.marginLeft = isDark ? '0' : '30px';
+function updateThemeIcon(theme) {
+    const themeNames = {
+        'dark-neon': '🌙',
+        'electric-blue': '⚡',
+        'neon-green': '🟢',
+        'deep-purple': '🟣',
+        'light-minimal': '☀️'
+    };
+    themeIcon.textContent = themeNames[theme] || '🌙';
 }
 
 themeToggle.addEventListener('click', () => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    const themes = Object.keys(themeThemes);
+    const currentIndex = themes.indexOf(currentTheme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    const nextTheme = themes[nextIndex];
 
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeUI(newTheme);
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    themeSelect.value = nextTheme;
+    updateThemeIcon(nextTheme);
+});
+
+themeSelect.addEventListener('change', (e) => {
+    const selectedTheme = e.target.value;
+    document.documentElement.setAttribute('data-theme', selectedTheme);
+    localStorage.setItem('theme', selectedTheme);
+    updateThemeIcon(selectedTheme);
 });
 
 // ==================== NOTIFICACIONES DEL NAVEGADOR ====================

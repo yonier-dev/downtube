@@ -1,4 +1,5 @@
 :root {
+    /* Tema A: Oscuro Neón (por defecto) */
     --bg-color: #0a0a0a;
     --card-bg: #141414;
     --card-hover: #1e1e1e;
@@ -16,6 +17,82 @@
     --shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     --radius: 16px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tema B: Azul Eléctrico */
+[data-theme="electric-blue"] {
+    --bg-color: #0a192f;
+    --card-bg: #112240;
+    --card-hover: #1a3058;
+    --text-primary: #e6f1ff;
+    --text-secondary: #8892b0;
+    --text-muted: #5a6b8c;
+    --accent: #64ffda;
+    --accent-hover: #4fd1c7;
+    --accent-glow: rgba(100, 255, 218, 0.4);
+    --input-bg: #1d2d50;
+    --border-color: #2d4266;
+    --success: #4ade80;
+    --error: #f87171;
+    --warning: #fbbf24;
+    --shadow: 0 20px 40px rgba(10, 25, 47, 0.6);
+}
+
+/* Tema C: Verde Neón */
+[data-theme="neon-green"] {
+    --bg-color: #000000;
+    --card-bg: #0a0a0a;
+    --card-hover: #141414;
+    --text-primary: #00ff88;
+    --text-secondary: #00cc6a;
+    --text-muted: #00994d;
+    --accent: #00ff88;
+    --accent-hover: #00cc6a;
+    --accent-glow: rgba(0, 255, 136, 0.4);
+    --input-bg: #0a0a0a;
+    --border-color: #00ff88;
+    --success: #00ff88;
+    --error: #ff0055;
+    --warning: #ffaa00;
+    --shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Tema D: Púrpura Profundo */
+[data-theme="deep-purple"] {
+    --bg-color: #1a0b2e;
+    --card-bg: #25153e;
+    --card-hover: #301d50;
+    --text-primary: #e1bee7;
+    --text-secondary: #9370db;
+    --text-muted: #7b61aa;
+    --accent: #bb86fc;
+    --accent-hover: #a678e8;
+    --accent-glow: rgba(187, 134, 252, 0.4);
+    --input-bg: #2d1b4a;
+    --border-color: #5e3ee6;
+    --success: #03dac6;
+    --error: #cf6679;
+    --warning: #03dac6;
+    --shadow: 0 20px 40px rgba(26, 11, 46, 0.6);
+}
+
+/* Tema E: Claro Minimalista */
+[data-theme="light-minimal"] {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --card-hover: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --accent: #ff0000;
+    --accent-hover: #cc0000;
+    --accent-glow: rgba(255, 0, 0, 0.2);
+    --input-bg: #ffffff;
+    --border-color: #cbd5e1;
+    --success: #22c55e;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -202,6 +279,37 @@ header h1 {
 
 .theme-toggle .toggle-icon {
     font-size: 0.8rem;
+}
+
+/* Selector de temas */
+.theme-selector {
+    position: fixed;
+    top: 1.5rem;
+    right: 7rem;
+    z-index: 100;
+}
+
+.theme-selector select {
+    padding: 0.75rem 1rem;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.theme-selector select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.theme-selector option {
+    background: var(--card-bg);
+    color: var(--text-primary);
 }
 
 #searchInput {
@@ -544,5 +652,56 @@ button:disabled {
     .result-actions button {
         padding: 0.5rem 0.75rem;
         font-size: 0.8rem;
+    }
+
+    /* Ajustes móviles para tema y formato */
+    .theme-selector {
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .format-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .format-group label {
+        margin-bottom: 0.25rem;
+    }
+
+    .format-group select {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .search-card,
+    .download-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .result-item {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .result-actions {
+        margin-left: 0;
+        width: 100%;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .result-actions button {
+        flex: 1;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .result-thumbnail {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
     }
 }
