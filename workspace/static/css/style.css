@@ -623,10 +623,30 @@ button:disabled {
         font-size: 0.8rem;
     }
 
-    /* Ajustes móviles para tema y formato */
-    .theme-selector {
+    /* Ajustes móviles para tema y idioma - apilados horizontalmente */
+    .theme-selector,
+    .lang-selector {
+        position: fixed;
         top: 1rem;
+        right: auto;
+        left: auto;
+        z-index: 100;
+    }
+
+    .theme-selector {
+        right: 7rem;
+    }
+
+    .lang-selector {
         right: 1rem;
+    }
+
+    .theme-selector select,
+    .lang-selector select {
+        width: auto;
+        min-width: 120px;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.85rem;
     }
 
     .format-group {
